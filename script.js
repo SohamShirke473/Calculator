@@ -22,12 +22,12 @@ function handleSymbol(symbol) {
         case '=':
             if (previousOperator === null) {
                 if (buffer !== "") {
-                    runningTotal = parseInt(buffer);
+                    runningTotal = parseFloat(buffer);
                 }
                 buffer = runningTotal.toString();
                 return;
             }
-            flushOperation(parseInt(buffer));
+            flushOperation(parseFloat(buffer));
             previousOperator = null;
             buffer = runningTotal.toString();
             break;
@@ -46,8 +46,8 @@ function handleSymbol(symbol) {
 function handleMath(symbol) {
     if (buffer === "") return;
     
-    const intBuffer = parseInt(buffer);
-    if (runningTotal === 0) {
+    const intBuffer = parseFloat(buffer);
+    if (runningTotal === 0 && previousOperator === null) {
         runningTotal = intBuffer;
     } else {
         flushOperation(intBuffer);
@@ -57,6 +57,8 @@ function handleMath(symbol) {
 }
 
 function flushOperation(intBuffer) {
+    if (previousOperator === null) return;
+
     switch (previousOperator) {
         case '+':
             runningTotal += intBuffer;
@@ -70,20 +72,15 @@ function flushOperation(intBuffer) {
         case '÷':
             if (intBuffer === 0) {
                 alert("Error: Cannot divide by zero");
-                runningTotal = 0;
                 return;
             }
-
             runningTotal = Math.floor(runningTotal / intBuffer);
             break;
     }
 }
 
 function handleNumber(numberString) {
-  
-    buffer = buffer === "0" 
-        ? numberString 
-        : buffer + numberString;
+    buffer = buffer === "0" ? numberString : buffer + numberString;
 }
 
 function init() {
